@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impacto y Gestión del PET en Veracruz - Proyecto Completo</title>
+    <style>
+        /* --- ESTILOS GENERALES Y CONFIGURACIÓN --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f0fdf4; /* Fondo ecológico más suave y fresco */
+            color: #1e293b;
+            line-height: 1.7;
+        }
+
+        /* --- PANTALLA DE ENTRADA CON ANIMACIÓN --- */
+        #pantalla-entrada {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #064e3b, #10b981); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 9999;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #pantalla-entrada h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-align: center;
+            padding: 0 20px;
+            max-width: 900px;
+            animation: fadeInDown 1s ease;
+        }
+
+        #pantalla-entrada p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            text-align: center;
+            max-width: 750px;
+            padding: 0 20px;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .btn-entrar {
+            padding: 18px 55px;
+            font-size: 1.3rem;
+            background-color: #ffffff;
+            color: #065f46;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-entrar:hover {
+            transform: translateY(-3px) scale(1.03);
+            background-color: #d1fae5;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Clase que aplicará JavaScript para desvanecer la pantalla */
+        .ocultar-pantalla {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none;
+            transform: translateY(-100%) !important;
+        }
+
+        /* --- ENCABEZADO PRINCIPAL --- */
+        header {
+            background: linear-gradient(rgba(20, 83, 45, 0.9), rgba(22, 101, 52, 0.95)), 
+                        url('https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1200&q=80') center/cover;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 5px solid #10b981;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- BARRA DE NAVEGACIÓN MEJORADA --- */
+        nav {
+            background-color: #14532d;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav ul li a {
+            display: block;
+            color: #d1fae5;
+            text-decoration: none;
+            padding: 20px 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #fff;
+            background-color: #16a34a;
+        }
+
+        /* --- CONTADOR DINÁMICO (WIDGET DE JS) --- */
+        .contador-box {
+            background: linear-gradient(135deg, #1e3a8a, #0284c7);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+        }
+
+        .contador-box h3 {
+            color: #e0f2fe !important;
+            margin-top: 0 !important;
+            font-size: 1.4rem;
+        }
+
+        .numero-contador {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 10px 0;
+            font-family: monospace, sans-serif;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        /* --- SECCIONES Y CONTENEDOR --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        section {
+            background-color: white;
+            padding: 45px;
+            margin-bottom: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            color: #14532d;
+            border-bottom: 3px solid #10b981;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: #166534;
+            margin: 35px 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        /* --- CUADROS DE INFORMACIÓN ESTILIZADOS --- */
+        .cuadro-rojo, .cuadro-amarillo, .cuadro-verde, .cuadro-azul {
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .cuadro-rojo { background-color: #fef2f2; border-left: 6px solid #ef4444; color: #991b1b; }
+        .cuadro-amarillo { background-color: #fffbeb; border-left: 6px solid #f59e0b; color: #92400e; }
+        .cuadro-verde { background-color: #f0fdf4; border-left: 6px solid #10b981; color: #14532d; }
+        .cuadro-azul { background-color: #f0f9ff; border-left: 6px solid #06b6d4; color: #075985; }
+
+        a.enlace-web {
+            color: #059669;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        a.enlace-web:hover {
+            border-color: #059669;
+            color: #047857;
+        }
+
+        /* LISTAS */
+        ul.puntos-eco, ol.pasos-reciclaje {
+            margin-left: 35px;
+            margin-bottom: 25px;
+        }
+
+        ul.puntos-eco li, ol.pasos-reciclaje li {
+            margin-bottom: 14px;
+            padding-left: 5px;
+        }
+
+        /* TABLAS MODERNAS */
+        .tabla-contenedor {
+            overflow-x: auto; 
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+            background-color: white;
+        }
+
+        table, th, td {
+            border: none;
+        }
+
+        th {
+            background-color: #14532d;
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            font-size: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f1fddf;
+            transition: background-color 0.2s ease;
+        }
+
+        /* GRID DE TARJETAS DE IMÁGENES */
+        .contenedor-imagenes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .bloque-imagen {
+            background-color: white;
+            padding: 0;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .bloque-imagen:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+
+        .bloque-imagen img {
+            width: 100%;
+            height: 240px;
+            border-radius: 0;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .bloque-imagen:hover img {
+            transform: scale(1.05);
+        }
+
+        .bloque-imagen p {
+            font-size: 0.9rem;
+            color: #475569;
+            padding: 15px;
+            margin: 0;
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* PIE DE PÁGINA */
+        footer {
+            background-color: #0f2919;
+            color: #a7f3d0;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+            font-size: 0.95rem;
+            border-top: 4px solid #10b981;
+        }
+
+        footer p:first-child {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        /* REGLAS DE ANIMACIÓN CSS */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE ENTRADA INTERACTIVA -->
+    <div id="pantalla-entrada">
+        <h1>El Circuito del PET en el Estado de Veracruz</h1>
+        <p>Un diagnóstico integral sobre el consumo masivo de envases plásticos, su impacto ambiental en los ecosistemas de la entidad y las alternativas de economía circular.</p>
+        <a href="#diagnostico" class="btn-entrar" id="btn-ingresar">Entrar al Proyecto</a>
+    </div>
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <header>
+        <h1>Análisis Multidisciplinario del PET en Veracruz</h1>
+        <p>Investigación Académica: Consumo, Daño Ecológico Costero y Soluciones Tecnológicas Locales</p>
+    </header>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav>
+        <ul>
+            <li><a href="#diagnostico" class="nav-link">Diagnóstico y Cifras</a></li>
+            <li><a href="#oceanos" class="nav-link">Contaminación Marina</a></li>
+            <li><a href="#industrial" class="nav-link">Proceso e Industria</a></li>
+            <li><a href="#alternativas" class="nav-link">Alternativas e Innovación</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="container">
+
+        <!-- WIDGET DE JAVASCRIPT: CONTADOR ACUMULATIVO -->
+        <div class="contador-box">
+            <h3>Estimación de botellas plásticas desechadas en Veracruz desde que abriste la página</h3>
+            <div class="numero-contador" id="contador-pet">0</div>
+            <p>Calculado bajo una tasa aproximada regional de 18 botellas por segundo en zonas urbanas.</p>
+        </div>
+
+        <!-- SECCIÓN 1: DIAGNÓSTICO -->
+        <section id="diagnostico">
+            <h2>📊 Diagnóstico Regional: Generación y Persistencia Ambiental</h2>
+            <p>El crecimiento demográfico e industrial en los centros urbanos del estado de Veracruz ha disparado la generación de residuos sólidos urbanos. De acuerdo con datos consolidados, la entidad se posiciona entre los estados con mayor volumen de desechos diarios a nivel nacional, donde los envases plásticos de polietileno tereftalato (PET) constituyen un alto porcentaje debido a las demandas de consumo del clima tropical de la costa.</p>
+            
+            <div class="cuadro-rojo">
+                <strong>🚨 Alerta de Impacto Ambiental:</strong> Debido a su estructura química molecular, un envase común de PET tarda entre 100 y 500 años en desintegrarse por completo en los suelos veracruzanos, rompiéndose únicamente en microplásticos microscópicos que envenenan los mantos acuíferos.
+            </div>
+
+            <div class="cuadro-amarillo">
+                <strong>⚠️ Alerta de Infraestructura:</strong> El acumulamiento masivo de botellas vacías obstruye de manera alarmante el drenaje pluvial subterráneo en urbes como el Puerto de Veracruz y Poza Rica, triplicando el riesgo de inundaciones durante frentes fríos.
+            </div>
+
+            <h3>Galería Ecosistémica: El Problema de Origen</h3>
+            <div class="contenedor-imagenes">
+                <div class="bloque-imagen">
+                    <img src="https://images.unsplash.com/photo-1526951494034-ee02d177421e?auto=format&fit=crop&w=500&q=80" alt="Consumo masivo de plástico">
+                    <p>Consumo desmedido de bebidas comerciales embotelladas en zonas urbanas cálidas.</p>
+                </div>
+                <div class="bloque-imagen">
+                    <img src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=500&q=80" alt="Plásticos acumulados en basureros">
+                    <p>Saturación por plásticos de un solo uso en vertederos municipales de la entidad.</p>
+                </div>
+            </div>
+
+            <h3>Tabla 1: Diagnóstico de Residuos en Principales Municipios Veracruzanos</h3>
+            <p>La siguiente tabla muestra la correlación estimada entre la población urbana y la producción aproximada de basura:</p>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Municipio / Región</th>
+                            <th>Población Estimada</th>
+                            <th>Basura Diaria (Toneladas)</th>
+                            <th>Principales Consecuencias del PET Mal Dispuesto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Zona Metrop. de Veracruz / Boca del Río</strong></td>
+                            <td>~900,000 hab.</td>
+                            <td>~950 t</td>
+                            <td>Taponamiento de redes de alcantarillado e inundaciones severas en avenidas primarias.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Xalapa (Capital)</strong></td>
+                            <td>~500,000 hab.</td>
+                            <td>~450 t</td>
+                            <td>Saturación acelerada del relleno sanitario y arrastre hacia cuencas bajas del río Actopan.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Coatzacoalcos / Minatitlán</strong></td>
+                            <td>~450,000 hab.</td>
+                            <td>~400 t</td>
+                            <td>Descarga directa de plásticos ligeros a los márgenes del Río Coatzacoalcos y dunas pesqueras.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Poza Rica / Tuxpan</strong></td>
+                            <td>~300,000 hab.</td>
+                            <td>~280 t</td>
+                            <td>Contaminación visible de arroyos internos y acumulación en riberas turísticas del norte.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CONTAMINACIÓN MARINA -->
+        <section id="oceanos">
+            <h2>🌊 Contaminación Oceánica en el Litoral Veracruzano</h2>
+            <p>Veracruz cuenta con una de las extensiones costeras más amplias del país, recibiendo descargas hídricas procedentes de grandes cuencas hidrográficas. Los envases de plástico tirados negligentemente en las calles son arrastrados por las corrientes fluviales de los ríos Pánuco, Papaloapan y Coatzacoalcos, desembocando directamente en el Golfo de México.</p>
+            
+            <div class="cuadro-azul">
+                <strong>ℹ️ Versatilidad Industrial:</strong> El PET destaca en el mercado por su ligereza y resistencia. Su uso reduce costos de combustibles en distribución en comparación con el vidrio; el reto real radica en recolectarlo una vez vacío.
+            </div>
+
+            <h3>Galería de Impacto: Del Río hacia el Océano</h3>
+            <div class="contenedor-imagenes">
+                <div class="bloque-imagen">
+                    <img src="https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcTBQb7dz29QU5dnUJnVh9zb7C6Y8FO45RxZylOlAkjm2Mvn1xu6ZNcfkITNaMVT_6xhZEsMBW8tvVMepEM" alt="Playas saturadas de plástico">
+                    <p>Toneladas de envases PET arrastrados por frentes fríos hacia las playas de Coatzacoalcos.</p>
+                </div>
+                <div class="bloque-imagen">
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=500&q=80" alt="Ecosistema costero afectado">
+                    <p>Microplásticos y botellas atoradas en las raíces de los manglares de Alvarado.</p>
+                </div>
+            </div>
+
+            <h3>Tabla 2: Impacto del PET Desechado en Sectores Clave de Veracruz</h3>
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sector Económico / Social</th>
+                            <th>Nivel de Afectación</th>
+                            <th>Descripción del Daño Directo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pesca Ribereña</strong></td>
+                            <td>Crítico</td>
+                            <td>Los microplásticos reducen la fauna pesquera. Las redes de arrastre capturan basura plástica, dañando motores y equipos.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Turismo de Playa</strong></td>
+                            <td>Alto</td>
+                            <td>Pérdida del valor paisajístico en destinos como Tecolutla, Chachalacas y Anton Lizardo, alejando derrama económica.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Salud Pública</strong></td>
+                            <td>Moderado - Alto</td>
+                            <td>Estancamientos de agua en botellas abandonadas propician criaderos del mosquito transmisor del Dengue y Zika.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: PROCESO INDUSTRIAL -->
+        <section id="industrial">
+            <h2>⚙️ Reciclaje Mecánico y Economía Circular</h2>
+            <p>La transición ecológica exige dejar atrás el modelo lineal de "extraer, usar y tirar" para adoptar la <strong>Economía Circular</strong>. El reciclaje del PET es un ejemplo claro de cómo un residuo puede reincorporarse exitosamente a las cadenas productivas como materia prima de alta calidad.</p>
+
+            <h3>El Proceso Técnico del Reciclaje Mecánico</h3>
+            <ol class="pasos-reciclaje">
+                <li><strong>Acopio en Origen:</strong> Separación residencial y acopio en contenedores escolares o urbanos.</li>
+                <li><strong>Separación por Color:</strong> Se dividen minuciosamente los envases transparentes de los de color para conservar la pureza.</li>
+                <li><strong>Molienda Mecánica:</strong> Cuchillas industriales trituran los cuerpos plásticos convirtiéndolos en hojuelas o pellets.</li>
+                <li><strong>Lavado Químico:</strong> Baños alcalinos eliminan pegamentos de etiquetas y sedimentos orgánicos.</li>
+            </ol>
+
+            <h3>Tabla 3: Eficiencia y Propiedades Físicas en el Reciclaje</h3>
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fase del Plástico</th>
+                            <th>Estado Físico</th>
+                            <th>Porcentaje de Pérdida en Proceso</th>
+                            <th>Aplicación Comercial Directa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PET Post-Consumo</strong></td>
+                            <td>Botella compactada sucia</td>
+                            <td>~12% (etiquetas y tapitas)</td>
+                            <td>Materia prima bruta para plantas trituradoras masivas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hojuela Lavada</strong></td>
+                            <td>Escamas limpias trituradas</td>
+                            <td>~2% (humedad residual)</td>
+                            <td>Exportación y fabricación directa de láminas termoformadas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pellet Extruido</strong></td>
+                            <td>Gránulos plásticos puros</td>
+                            <td>&lt; 1% (mínimo técnico)</td>
+                            <td>Inyección de nuevas preformas para botellas de grado alimenticio.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: INNOVACIÓN Y ALTERNATIVAS -->
+        <section id="alternativas">
+            <h2>💡 Innovación Veracruzana e Iniciativas Comunitarias</h2>
+            <p>Frente a la debilidad de la recolección pública tradicional, comunidades educativas de nivel bachillerato y colectivos ambientales de Veracruz han implementado soluciones creativas e innovadoras, utilizando la versatilidad del material para beneficio social directo.</p>
+
+            <div class="cuadro-verde">
+                <strong>🌱 Iniciativa Escolar Destacada:</strong> El uso de <em>"Eco-ladrillos"</em> (botellas PET rellenas firmemente con plásticos flexibles no reciclables) ha permitido a diversas comunidades rurales de las Altas Montañas edificar bardas perimetrales y almacenes de bajo costo térmico.
+            </div>
+
+            <h3>Galería de Innovación: Soluciones Ecológicas</h3>
+            <div class="contenedor-imagenes">
+                <div class="bloque-imagen">
+                    <img src="https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcTSQqRJOFy5N7MoyxlnD-TM7AtyHJRRbXZRz5RwZudKED-c1mUBSixtQZq8fFqqMu1ZyMu_DgWG21BtLSU" alt="Maquinaria industrial reciclaje">
+                    <p>Líneas de triturado industrial para convertir botellas veracruzanas en materia prima reutilizable.</p>
+                </div>
+                <div class="bloque-imagen">
+                    <img src="https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcT1BT9JkYRmJDBNgDNW7IRTB3ZUKAMbt_qEaUs21E0ZtAyqryjqLochH7N6WqRCaVY2DDTKbp0BsH89YUE" alt="Construcción con ecoladrillos">
+                    <p>Integración de botellas PET como eco-ladrillos compactos para infraestructura rural.</p>
+                </div>
+            </div>
+
+            <h3>Tabla 4: Proyectos de Innovación Tecnológica con PET en Veracruz</h3>
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Línea de Innovación</th>
+                            <th>Material Producido</th>
+                            <th>Uso o Aplicación Local Recomendada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Infraestructura Sustentable</strong></td>
+                            <td>Bloques ligeros de concreto adicionados con hojuelas de PET.</td>
+                            <td>Construcción de viviendas populares resistentes a sismos en zonas vulnerables.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manufactura Tecnológica</strong></td>
+                            <td>Filamento termoplástico extruido de envases limpios.</td>
+                            <td>Materia prima para impresión 3D de prótesis mecánicas en laboratorios escolares.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Industria Textil Regional</strong></td>
+                            <td>Fibra sintética de poliéster reciclado.</td>
+                            <td>Confección de uniformes escolares, mochilas ecológicas y lonas impermeables de alta duración.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Iniciativas Sociales Activas en la Entidad:</h3>
+            <ul class="puntos-eco">
+                <li><strong>Campañas Escolares de Recolección (Reciclatones):</strong> Competencias entre planteles educativos para juntar toneladas de plástico a cambio de equipamiento tecnológico.</li>
+                <li><strong>Intercambios de Residuos por Despensa:</strong> Programas locales en municipios del norte y sur del estado donde el PET se cambia por productos básicos.</li>
+            </ul>
+
+            <p style="margin-top: 35px;">Para complementar tu estudio con marcos legales oficiales y estadísticas federales actualizadas, puedes revisar el portal de la <a href="https://www.gob.mx/semarnat" target="_blank" class="enlace-web">SEMARNAT</a> o monitorear las convocatorias ecológicas activas del <a href="https://www.veracruz.gob.mx/" target="_blank" class="enlace-web">Gobierno del Estado de Veracruz</a>.</p>
+        </section>
+
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© 2026 Proyecto Integrador de Informática y Ecología - Nivel Bachillerato</p>
+        <p>Desarrollado con HTML5, CSS3 Avanzado y JavaScript Dinámico en SublimeText.</p>
+    </footer>
+
+    <!-- --- CÓDIGO JAVASCRIPT --- -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. MANEJO EFECTIVO DE LA PANTALLA DE ENTRADA
+            const btnIngresar = document.getElementById("btn-ingresar");
+            const pantallaEntrada = document.getElementById("pantalla-entrada");
+
+            btnIngresar.addEventListener("click", function(e) {
+                // Previene el comportamiento por defecto temporalmente para ejecutar la animación
+                e.preventDefault(); 
+                pantallaEntrada.classList.add("ocultar-pantalla");
+                
+                // Hace scroll al destino del botón después de que empiece a desvanecerse
+                const targetId = this.getAttribute("href");
+                setTimeout(() => {
+                    document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                }, 400);
+            });
+
+            // 2. CONTADOR DINÁMICO DE RESIDUOS PET
+            let contadorContenedor = document.getElementById("contador-pet");
+            let totalBotellas = 0;
+            
+            // Cada 1000 milisegundos (1 segundo) sumamos un aproximado de 18 botellas
+            setInterval(function() {
+                totalBotellas += 18;
+                contadorContenedor.textContent = totalBotellas.toLocaleString();
+            }, 1000);
+
+            // 3. SELECCIÓN ACTIVA DE ENLACES EN LA BARRA DE NAVEGACIÓN AL NAVEGAR (Scroll Spy)
+            const sections = document.querySelectorAll("section");
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            window.addEventListener("scroll", () => {
+                let actualSectionId = "";
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    // Detecta si la sección se encuentra en la vista superior del navegador
+                    if (pageYOffset >= (sectionTop - 150)) {
+                        actualSectionId = section.getAttribute("id");
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === "#" + actualSectionId) {
+                        link.classList.add("active");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
